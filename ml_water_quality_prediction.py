@@ -29,7 +29,6 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation,Dropout
 
-!pip show pandas
 
 data = pd.read_csv('/content/water_potability.csv')
 
