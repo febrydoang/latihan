@@ -72,7 +72,7 @@ trace = go.Pie(labels = ['Potable', 'Not Potable'], values = data['Potability'].
 layout = dict(title =  'Distribution of Drinkable Water')
 
 fig = dict(data = [trace], layout=layout)
-py.iplot(fig)
+py.plot(fig)
 
 plt.figure(figsize = (15,10), tight_layout = True)
 
