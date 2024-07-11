@@ -17,6 +17,19 @@ data['ph'].fillna(value=data['ph'].median(), inplace=True)
 data['Trihalomethanes'].fillna(value=data['Trihalomethanes'].median(), inplace=True)
 data = data.dropna()
 
+# Data visualization
+fig, ax = plt.subplots(figsize=(18, 18))
+sns.heatmap(data.corr(), ax=ax, annot=True)
+plt.show()
+
+fig, ax = plt.subplots(figsize=(8, 8))
+abs(data.corr().round(2)['Potability']).sort_values()[:-1].plot.barh(color='c', ax=ax)
+plt.show()
+
+fig, ax = plt.subplots(figsize=(8, 8))
+data.corr()['Potability'][:-1].sort_values().plot(kind='bar', ax=ax)
+plt.show()
+
 # Data splitting
 X = data.drop('Potability', axis=1).values
 y = data['Potability'].values
@@ -43,6 +56,7 @@ model.compile(optimizer='adam', loss='binary_crossentropy')
 model.fit(x=X_train, y=y_train, epochs=300, validation_data=(X_test, y_test), verbose=1)
 model_loss = pd.DataFrame(model.history.history)
 model_loss.plot()
+plt.show()
 
 # Save the model
 model.save('water_potability_model.h5')
@@ -50,7 +64,7 @@ model.save('water_potability_model.h5')
 # Model evaluation
 y_pred = model.predict(X_test)
 y_pred = [1 if y >= 0.5 else 0 for y in y_pred]
-print(classification_report(y_test, y_pred))
+print(classification_report(y_test, y_pred, zero_division=0))
 cm = confusion_matrix(y_test, y_pred)
 print(cm)
 accuracy = (cm[0][0] + cm[1][1]) / (cm[0][0] + cm[0][1] + cm[1][0] + cm[1][1])
@@ -64,7 +78,7 @@ model = load_model('water_potability_model.h5')
 
 def main():
     st.title("Water Potability Prediction")
-    
+
     ph = st.number_input("pH")
     hardness = st.number_input("Hardness")
     solids = st.number_input("Solids (TDS)")
@@ -74,7 +88,7 @@ def main():
     organic_carbon = st.number_input("Organic Carbon")
     trihalomethanes = st.number_input("Trihalomethanes")
     turbidity = st.number_input("Turbidity")
-    
+
     if st.button("Predict"):
         input_data = np.array([[ph, hardness, solids, chloramines, sulfate, conductivity, organic_carbon, trihalomethanes, turbidity]])
         input_data = scaler.transform(input_data)
